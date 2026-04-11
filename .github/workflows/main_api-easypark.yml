@@ -21,17 +21,17 @@ jobs:
           java-version: '21'
           distribution: 'microsoft'
 
-      # Corrigido: Adicionado working-directory para o Maven encontrar o pom.xml
+      # Se o pom.xml estiver na RAIZ, remova a linha working-directory.
+      # Se estiver dentro da pasta, use apenas o nome da pasta sem o "./" inicial.
       - name: Build with Maven
         run: mvn clean install
-        working-directory: ./easypark-java
+        working-directory: easypark-java 
 
-      # Corrigido: Ajustado o path para buscar o JAR dentro da subpasta target
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: java-app
-          path: ./easypark-java/target/*.jar
+          path: easypark-java/target/*.jar
 
   deploy:
     runs-on: windows-latest
