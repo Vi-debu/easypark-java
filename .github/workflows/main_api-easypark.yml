@@ -21,17 +21,15 @@ jobs:
           java-version: '21'
           distribution: 'microsoft'
 
-      # Se o pom.xml estiver na RAIZ, remova a linha working-directory.
-      # Se estiver dentro da pasta, use apenas o nome da pasta sem o "./" inicial.
+      # TENTATIVA 1: Se o seu pom.xml estiver na raiz, use apenas:
       - name: Build with Maven
         run: mvn clean install
-        working-directory: easypark-java 
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: java-app
-          path: easypark-java/target/*.jar
+          path: target/*.jar
 
   deploy:
     runs-on: windows-latest
