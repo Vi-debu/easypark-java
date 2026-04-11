@@ -21,15 +21,21 @@ jobs:
           java-version: '21'
           distribution: 'microsoft'
 
-      # Aqui está o pulo do gato: apontamos direto para o arquivo pom.xml
+      # Comando inteligente: localiza o pom.xml em qualquer pasta e roda o build
       - name: Build with Maven
-        run: mvn clean install -f easypark-java/pom.xml
+        shell: pwsh
+        run: |
+          $pomFile = Get-ChildItem -Path . -Filter pom.xml -Recurse | Select-Object -First 1
+          if ($null -eq $pomFile) { throw "Arquivo pom.xml não encontrado no repositório!" }
+          Write-Host "POM encontrado em: $($pomFile.FullName)"
+          mvn clean install -f $($pomFile.FullName) -DskipTests
 
+      # Busca o arquivo .jar em qualquer subpasta target que tenha sido criada
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: java-app
-          path: easypark-java/target/*.jar
+          path: "**/target/*.jar"
 
   deploy:
     runs-on: windows-latest
